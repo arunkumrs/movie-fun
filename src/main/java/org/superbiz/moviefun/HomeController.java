@@ -1,6 +1,10 @@
 package org.superbiz.moviefun;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.superbiz.moviefun.albums.Album;
 import org.superbiz.moviefun.albums.AlbumFixtures;
@@ -13,6 +17,12 @@ import java.util.Map;
 
 @Controller
 public class HomeController {
+
+    @Autowired
+    private TransactionOperations moviesTransactionOperations;
+
+    @Autowired
+    private TransactionOperations albumsTransactionOperations;
 
     private final MoviesBean moviesBean;
     private final AlbumsBean albumsBean;
@@ -34,11 +44,23 @@ public class HomeController {
     @GetMapping("/setup")
     public String setup(Map<String, Object> model) {
         for (Movie movie : movieFixtures.load()) {
-            moviesBean.addMovie(movie);
+            moviesTransactionOperations.execute(new TransactionCallback() {
+
+                public Object doInTransaction(TransactionStatus status) {
+                    moviesBean.addMovie(movie);
+                    return "success";
+                }
+            });
         }
 
         for (Album album : albumFixtures.load()) {
-            albumsBean.addAlbum(album);
+            albumsTransactionOperations.execute(new TransactionCallback() {
+
+                public Object doInTransaction(TransactionStatus status) {
+                    albumsBean.addAlbum(album);
+                    return "success";
+                }
+            });
         }
 
         model.put("movies", moviesBean.getMovies());
