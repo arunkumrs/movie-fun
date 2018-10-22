@@ -54,4 +54,21 @@ public class AlbumsBean {
     public void updateAlbum(Album album) {
         entityManager.merge(album);
     }
+
+    @Transactional
+    public AlbumSchedulerTask updateSchedulerTimeStamp(AlbumSchedulerTask albumSchedulerTask){
+        return entityManager.merge(albumSchedulerTask);
+    }
+
+    @Transactional
+    public AlbumSchedulerTask getSchedulerTimeStamp(){
+        CriteriaQuery<AlbumSchedulerTask> cq = entityManager.getCriteriaBuilder().createQuery(AlbumSchedulerTask.class);
+        cq.select(cq.from(AlbumSchedulerTask.class));
+        List<AlbumSchedulerTask> albumSchedulerTaskList = entityManager.createQuery(cq).getResultList();
+        if(albumSchedulerTaskList.isEmpty()){
+            return null;
+        }else{
+            return albumSchedulerTaskList.get(0);
+        }
+    }
 }
