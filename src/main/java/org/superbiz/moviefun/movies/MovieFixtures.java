@@ -1,5 +1,7 @@
 package org.superbiz.moviefun.movies;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -8,6 +10,8 @@ import static java.util.Arrays.asList;
 
 @Component
 public class MovieFixtures {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public List<Movie> load() {
         return asList(
